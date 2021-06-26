@@ -1,13 +1,15 @@
 # TODO write overview
 # TODO finish class
 import cv2
+import os
 import numpy
 import pytesseract
 import pandas as pd
 import numpy as np
 # from calamari_ocr.ocr.predict.predictor import MultiPredictor, PredictorParamsM
 
-pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
+if os.name == "nt":
+    pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
 
 
 class OCR:
