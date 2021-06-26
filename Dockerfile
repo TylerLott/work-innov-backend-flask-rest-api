@@ -1,8 +1,5 @@
 # Specify Base Image
-FROM opencvcourses/opencv:440
-
-ENV container docker
-ENV PATH /snap/bin:$PATH
+FROM opencvcourses/opencv:440 
 
 # Set working dir
 WORKDIR /app
@@ -15,9 +12,7 @@ RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
 
-
-
 COPY . .
 
 # Default Commands
-CMD ["flask", "run"]
+CMD ["flask", "run", "--host", "0.0.0.0"]
