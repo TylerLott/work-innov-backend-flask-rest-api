@@ -6,7 +6,7 @@ WORKDIR /app
 
 # Install Dependencies
 RUN apt-get update
-RUN apt=get install tesseract-ocr -y
+RUN apt-get install tesseract-ocr -y
 COPY requirements.txt requirements.txt
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt

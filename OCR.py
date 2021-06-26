@@ -5,7 +5,7 @@ import numpy
 import pytesseract
 import pandas as pd
 import numpy as np
-from calamari_ocr.ocr.predict.predictor import MultiPredictor, PredictorParams
+#from calamari_ocr.ocr.predict.predictor import MultiPredictor, PredictorParams
 
 pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
 
