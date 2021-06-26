@@ -1,0 +1,46 @@
+# put DOCKER_REPO, DOCKER_USER, DOCKER_PASS, DEPLOY_WEBHOOK_URL into github secrets
+# DOCKER_REPO should point to the Dockerfile.prod build
+
+name: Release - Test, Build & Redeploy
+
+on:
+  push:
+    branches:
+      - 'master'
+
+jobs:
+#   test:
+#     name: Test - Unit & Integration
+#     runs-on: ubuntu-20.04
+
+#     steps:
+
+
+  docker:
+    name: Publish - Docker Hub
+    runs-on: ubuntu-20.04
+#     needs: [test]
+    env:
+      REPO: ${{ secrets.DOCKER_REPO }}
+    steps:
+      - name: Login to Docker Hub
+        run: docker login -u ${{ secrets.DOCKER_USER }} 
+             -p ${{ secrets.DOCKER_PASS }}
+      - uses: actions/checkout@v2
+      - name: Build Docker image
+        run: docker build -f Dockerfile.prod -t $REPO:prod .
+      - name: Publish Docker image
+        run: docker push $REPO:prod
+
+  redeploy:
+    name: Redeploy webhook call
+    runs-on: ubuntu-20.04
+    needs: [docker]
+    steps:
+      - name: Deploy docker container webhook
+        uses: distributhor/workflow-webhook@v2
+        env:
+          webhook_url: ${{ secrets.DEPLOY_WEBHOOK_URL  }}
+          webhook_secret: "secr3t"
+          verify_ssl: false
+          
