@@ -34,7 +34,7 @@ MODULES:
 # TODO import and create OCR class
 
 import os
-import cv2
+from cv2 import imread
 from flask import Flask, abort, request, jsonify
 from flask_httpauth import HTTPBasicAuth
 from passlib.apps import custom_app_context as cac
@@ -74,7 +74,7 @@ def upload_file():
     print("This is the file data",file)
     file.save('./data/test.png')
 
-    img = cv2.imread('./data/test.png',0)
+    img = imread('./data/test.png',0)
     ocr = OCR(img)
     ocr.get_rois()
     data = ocr.extract()
