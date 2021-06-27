@@ -1,5 +1,5 @@
 # Specify Base Image
-FROM opencvcourses/opencv:440 
+FROM python:3.8.10
 
 # Set working dir
 WORKDIR /app
@@ -10,10 +10,20 @@ RUN apt-get install tesseract-ocr -y
 COPY requirements.txt requirements.txt
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
-RUN apt install libgl1-mesa-glx -y
-RUN apt-get install 'ffmpeg'\
-  'libsm6'\
-  'libxext6'  -y
+
+# stuff for opencv 
+RUN apt-get install build-essential
+RUN apt-get install cmake git libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev
+RUN apt-get install python-dev python-numpy libtbb2 libtbb-dev libjpeg-dev libpng-dev libtiff-dev libjasper-dev libdc1394-22-dev
+RUN git clone https://github.com/opencv/opencv.git
+RUN cd opencv
+RUN mkdir build
+RUN cd build
+RUN cmake -D CMAKE_BUILD_TYPE=Release -D
+RUN CMAKE_INSTALL_PREFIX=/usr/local ..
+RUN make
+RUN make install
+
 
 
 COPY . .

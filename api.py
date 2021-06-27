@@ -35,7 +35,7 @@ MODULES:
 
 import os
 from cv2 import imread
-from flask import Flask, abort, request, jsonify
+from flask import Flask, abort, request, jsonify, send_file
 from flask_httpauth import HTTPBasicAuth
 from passlib.apps import custom_app_context as cac
 from itsdangerous import (TimedJSONWebSignatureSerializer as Serializer, BadSignature, SignatureExpired)
@@ -68,6 +68,11 @@ def new_user():
     pass
 
 
+@app.route('/api/example_image')
+def example_image():
+    print('ex')
+    return send_file('data/test_img.png', mimetype='image/png')
+
 @app.route('/api/image_upload', methods=['POST'])
 def upload_file():
     file = request.files['file']
@@ -79,7 +84,7 @@ def upload_file():
     ocr.get_rois()
     data = ocr.extract()
     print(data)
-    return data
+    return jsonify( data )
 
 
 @app.route('/api/users/<int:id>', methods=['GET'])

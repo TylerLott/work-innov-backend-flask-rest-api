@@ -114,11 +114,12 @@ class OCR:
 
     def extract(self):
         outer=[]
+        # counter = 0
         for i in range(len(self.boxes)):
             for j in range(len(self.boxes[i])):
                 inner=''
                 if(len(self.boxes[i][j])==0):
-                    outer.append(' ')
+                    outer.append('')
                 else:
                     for k in range(len(self.boxes[i][j])):
                         y,x,w,h = self.boxes[i][j][k][0],self.boxes[i][j][k][1], self.boxes[i][j][k][2],self.boxes[i][j][k][3]
@@ -126,16 +127,35 @@ class OCR:
                         cv2.imwrite('final.png', finalimg)
 
                         
-                        out = pytesseract.image_to_string(finalimg, lang="eng", config='-c tessedit_char_whitelist=" 01234567890ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz.-/" --psm 6 --oem 1')
-                        inner = inner +" "+ out.replace("\n","").replace("\f","")
+                        out = pytesseract.image_to_data(finalimg, lang="eng", config='-c tessedit_char_whitelist=" 01234567890ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz.-/" --psm 6 --oem 1', output_type=pytesseract.Output.DICT)
+                        # counter +=1
+                        # print("############### boxes",self.boxes[i][j])
+                        # if counter > 3:
+                        #     pass
+                        #     # fds
+                        ind = np.where(np.array(out.get('conf')) != '-1')
+                        text = ''
+                        conf = 0
+                        if len(ind[0]) > 1:
+                            for n in ind[0]:
+                                text = text + out.get('text')[n] + ' '
+                                conf += float(out.get('conf')[n])
+                        elif len(ind[0]) == 1:
+                            text = out.get('text')[ind[0][0]]
+                            conf = float(out.get('conf')[ind[0][0]])
 
+                        conf = conf / len(ind[0])
+                        # print(text)
+
+                        inner = [text, conf]
                     outer.append(inner)
 
 
         arr = np.array(outer)
-        dataframe = pd.DataFrame(arr.reshape(self.rowcount,self.countcol))
-        return dataframe.to_json(orient="values")
-        data = dataframe.style.set_properties(align="left")
+        print(arr)
+        return arr.reshape((self.rowcount,self.countcol, 2)).tolist()
+        # dataframe = pd.DataFrame(arr.reshape((self.rowcount,self.countcol, 2)))
+        # return dataframe.to_json(orient="values")
 
     def __sort_contours(self, cnts, method="ltr"):
         # initialize the reverse flag and sort index
