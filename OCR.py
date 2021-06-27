@@ -114,7 +114,6 @@ class OCR:
 
     def extract(self):
         outer=[]
-        # counter = 0
         for i in range(len(self.boxes)):
             for j in range(len(self.boxes[i])):
                 inner=''
@@ -128,11 +127,7 @@ class OCR:
 
                         
                         out = pytesseract.image_to_data(finalimg, lang="eng", config='-c tessedit_char_whitelist=" 01234567890ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz.-/" --psm 6 --oem 1', output_type=pytesseract.Output.DICT)
-                        # counter +=1
-                        # print("############### boxes",self.boxes[i][j])
-                        # if counter > 3:
-                        #     pass
-                        #     # fds
+
                         ind = np.where(np.array(out.get('conf')) != '-1')
                         text = ''
                         conf = 0
@@ -140,11 +135,11 @@ class OCR:
                             for n in ind[0]:
                                 text = text + out.get('text')[n] + ' '
                                 conf += float(out.get('conf')[n])
+                            conf = conf / len(ind[0])
                         elif len(ind[0]) == 1:
                             text = out.get('text')[ind[0][0]]
                             conf = float(out.get('conf')[ind[0][0]])
-
-                        conf = conf / len(ind[0])
+                        
                         # print(text)
 
                         inner = [text, conf]
