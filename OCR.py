@@ -118,12 +118,12 @@ class OCR:
             for j in range(len(self.boxes[i])):
                 inner=''
                 if(len(self.boxes[i][j])==0):
-                    outer.append('')
+                    outer.append(['', -2])
                 else:
                     for k in range(len(self.boxes[i][j])):
                         y,x,w,h = self.boxes[i][j][k][0],self.boxes[i][j][k][1], self.boxes[i][j][k][2],self.boxes[i][j][k][3]
                         finalimg = self.bitnot[x:x+h, y:y+w]
-                        cv2.imwrite('final.png', finalimg)
+                        # cv2.imwrite('final.png', finalimg)
 
                         
                         out = pytesseract.image_to_data(finalimg, lang="eng", config='-c tessedit_char_whitelist=" 01234567890ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz.-/" --psm 6 --oem 1', output_type=pytesseract.Output.DICT)
@@ -139,10 +139,12 @@ class OCR:
                         elif len(ind[0]) == 1:
                             text = out.get('text')[ind[0][0]]
                             conf = float(out.get('conf')[ind[0][0]])
-                        
-                        # print(text)
+
+                        if text == '' and conf == 0:
+                            conf = -2
 
                         inner = [text, conf]
+                        print(inner)
                     outer.append(inner)
 
 
