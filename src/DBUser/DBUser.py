@@ -1,16 +1,18 @@
 # TODO write overview
 # TODO finish class
 from pymongo import MongoClient
-from db_pass import username, password, database_name, host_name
+from .db_pass import username, password, database_name, host_name
 
 
 class DBUser:
     def __init__(self):
-        client = MongoClient(host=host_name,
-                             port=27017,
-                             user=username,
-                             password=password,
-                             authSource='admin')
+        client = MongoClient(
+            host=host_name,
+            port=27017,
+            user=username,
+            password=password,
+            authSource="admin",
+        )
         db = client[database_name]
 
     def get_user_project(self):
@@ -45,5 +47,3 @@ class DBUser:
 
     def update_user(self):
         pass
-
-    

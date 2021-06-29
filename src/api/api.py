@@ -35,13 +35,18 @@ MODULES:
 
 import os
 from cv2 import imread
+from pathlib import Path
 from flask import Flask, abort, request, jsonify, send_file
 from flask_httpauth import HTTPBasicAuth
 from passlib.apps import custom_app_context as cac
-from itsdangerous import (TimedJSONWebSignatureSerializer as Serializer, BadSignature, SignatureExpired)
-from User import User
-from DBUser import DBUser
-from OCR import OCR
+from itsdangerous import (
+    TimedJSONWebSignatureSerializer as Serializer,
+    BadSignature,
+    SignatureExpired,
+)
+from src.User.User import User
+from src.DBUser.DBUser import DBUser
+from src.OCR.OCR import OCR
 
 
 app = Flask(__name__)
@@ -63,82 +68,86 @@ def verify_password(user_or_tok, password):
     return True
 
 
-@app.route('/api/users', methods=['POST'])
+@app.route("/api/users", methods=["POST"])
 def new_user():
     pass
 
 
-@app.route('/api/example_image')
+@app.route("/api/example_image", methods=["GET"])
 def example_image():
-    print('ex')
-    return send_file('data/test_img.png', mimetype='image/png')
+    sys_path = os.getcwd()
+    info_path = "/data/test_img.png"
+    path = Path(sys_path + info_path)
+    return send_file(path, mimetype="image/png")
 
-@app.route('/api/image_upload', methods=['POST'])
+
+@app.route("/api/image_upload", methods=["POST"])
 def upload_file():
-    file = request.files['file']
-    print("This is the file data",file)
-    file.save('./data/test.png')
+    file = request.files["file"]
+    sys_path = os.getcwd()
+    info_path = "/data/test_img.png"
+    path = Path(sys_path + info_path)
+    file.save(path)
 
-    img = imread('./data/test.png',0)
+    img = imread(str(path), 0)
     ocr = OCR(img)
     ocr.get_rois()
     data = ocr.extract()
-    print(data)
-    return jsonify( data )
+    return jsonify(data)
 
 
-@app.route('/api/users/<int:id>', methods=['GET'])
+@app.route("/api/users/<int:id>", methods=["GET"])
 def get_user(id):
     user = User.query.get(id)
     if not user:
         abort(400)
-    return jsonify({'username': user.username})
+    return jsonify({"username": user.username})
 
 
-@app.route('/api/token')
+@app.route("/api/token")
 @auth.login_required
 def get_tok():
     tok = g.user.generate_tok(1000)
-    return jsonify({'token': token.decode('ascii'), 'duration': 600})
+    return jsonify({"token": token.decode("ascii"), "duration": 600})
 
 
-@app.route('/api/drawing/<int:id>', methods=['GET'])
+@app.route("/api/drawing/<int:id>", methods=["GET"])
 @auth.login_required
 def get_image():
     pass
 
 
-@app.route('/api/projects', methods=['GET'])
+@app.route("/api/projects", methods=["GET"])
 @auth.login_required
 def get_projects():
     pass
 
 
-@app.route('/api/project/<int:id>', methods=['GET'])
+@app.route("/api/project/<int:id>", methods=["GET"])
 @auth.login_required
 def get_project(id):
     pass
 
 
-@app.route('/api/part/<int:id>', methods=['GET'])
+@app.route("/api/part/<int:id>", methods=["GET"])
 @auth.login_required
 def get_part(id):
     pass
 
 
-@app.route('/api/project', methods=['POST'])
+@app.route("/api/project", methods=["POST"])
 @auth.login_required
 def create_project():
     pass
 
 
-@app.route('/api/part', methods=['POST'])
+@app.route("/api/part", methods=["POST"])
 @auth.login_required
 def create_part():
     pass
 
 
-@app.route('/api/drawing', methods=['POST'])
+@app.route("/api/drawing", methods=["POST"])
 @auth.login_required
 def upload_drawing():
     pass
