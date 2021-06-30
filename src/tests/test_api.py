@@ -5,7 +5,6 @@ Tests the response from certain api calls that the website will be making
 
 """
 import unittest
-import io
 from src.api.api import app
 
 
