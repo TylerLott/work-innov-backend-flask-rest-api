@@ -1,5 +1,0 @@
-"""constants for database"""
-USERNAME = "root"
-PASSWORD = "pass"
-DATABASE_NAME = "ocr_db"
-HOST_NAME = "ocr_mongodb"

@@ -130,6 +130,7 @@ def _get_shape_cnt(rows):
 
 
 def _get_final_boxes(rows):
+    """This handles for ragged tables that may be input"""
     final_boxes = []
     center = _get_center(rows)
     col_cnt = _get_shape_cnt(rows)

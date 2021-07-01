@@ -32,7 +32,7 @@ class OCR:
         """
         Run table extraction and return array of shape(rows, columns)
         """
-        bitnot, bounding_boxes = get_boxes(self._image)
+        processed_image, bounding_boxes = get_boxes(self._image)
         row = []
         for i in bounding_boxes:
             for j in i:
@@ -42,7 +42,7 @@ class OCR:
                     col = []
                     for k in j:
                         y, x, w, h = (k[0], k[1], k[2], k[3])
-                        cropped_img = bitnot[x : x + h, y : y + w]
+                        cropped_img = processed_image[x : x + h, y : y + w]
                         col = _run_tesseract(cropped_img)
                     row.append(col)
 
@@ -53,7 +53,7 @@ class OCR:
 def _run_tesseract(image):
     tesseract_config = """-c tessedit_char_whitelist=
         "01234567890ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz.-/ '"
-        --psm 6 --oem 1"""
+        --psm 7 --oem 1"""
     out = pytesseract.image_to_data(
         image,
         lang="eng",
@@ -71,8 +71,3 @@ def _run_tesseract(image):
     if text == "" and conf == 0:
         conf = -2  # this denotes a empty space predition
     return [text, conf]
-
-
-if __name__ == "__main__":
-    ocr = OCR("../../../test_img.png")
-    print(ocr.extract_table())

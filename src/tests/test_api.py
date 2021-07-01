@@ -42,3 +42,7 @@ class TestApi(unittest.TestCase):
 
         response2 = client.get("/api/image_upload")
         self.assertEqual(response2.status_code, 405)
+
+
+if __name__ == "__main__":
+    unittest.main()
